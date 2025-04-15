@@ -1,0 +1,28 @@
+h1 {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: medium;
+}
+
+div {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+p {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+table, th, td {
+    border:1px solid black;
+    width: 50%;
+}
+
+body {
+    background-color: aquamarine; 
+    padding: 5%;
+    text-align: justify;
+}
+
+img {
+    display: block;
+    margin: 0 auto;    
+}
