@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meu Portfólio</title>
+  <link rel="stylesheet" href="styleee.css">
+</head>
+</head>
+<body>
+
+<!-- Note -->
+<div style="background:yellow;padding:5px">
+  <h4 style="text-align:center">Resize the browser window to see the responsive effect.</h4>
+</div>
+
+<header>
+  <h1> Pedro Arthur Brandão da Guia </h1>
+  <p>Desenvolvedor Mobile e paticante de esportes </p>
+</header>
+
+<nav>
+  <div class="links">
+    <a href="#sobre">Sobre</a>
+    <a href="#projetos">Projetos</a>
+    <a href="#contato">Contato</a>
+  </div>
+  <button class="toggle-dark" onclick="toggleDarkMode()">🌙 Modo Escuro</button>
+</nav>
+
+<!-- The flexible grid (content) -->
+<section class="row">
+  <aside>
+    <h2 id="sobre">Sobre Mim</h2>
+    <h5>Foto:</h5>
+    <div class="fakeimg" style="height:200px;">[Foto]</div>
+    <p>Sou um desenvolvedor interessado em me aperfeiçoar na área mobile, cursando Ciência da Computação na UFC Quixadá</p>
+    <h3>Hobbies</h3>
+    <p>Gosto de música, praticar Muay Thai e basquete.</p>
+    <div class="fakeimg" style="height:60px;"> Música</div><br>
+    <div class="fakeimg" style="height:60px;"> Muay Thai</div><br>
+    <div class="fakeimg" style="height:60px;"> basquete</div>
+  </aside>
+
+  <main>
+    <section id="projetos">
+      <h2>Meu Blog</h2>
+      <article>
+        <h3>Como comecei na programação</h3>
+        <h5>Publicado em 7 de dezembro de 2024</h5>
+        <div class="fakeimg" style="height:200px;">Imagem do artigo</div>
+        <p>Minha jornada começou na própria universidade, em 2023 e depois surgiu o gostp pela área mobile. Desde então, tenho me dedicado a aprender mais sobre desenvolvimento de aplicativos.</p>
+      <br>
+      <article>
+        <h3> Gosto por Muay Thai e basquete</h3>
+        <h5>Publicado em 2 de setembro de 2024</h5>
+        <div class="fakeimg" style="height:200px;">Imagem do projeto</div>
+        <p> Comecei a jogar basquete em 2019, após indicação do meu primo, e pratico Muay Thai desde do começo do ano de 2025</p>
+      </article>
+    </section>
+  </main>
+</section>
+
+<footer>
+  <h2 id="contato">Contato</h2>
+  <p>Email: pedroarthurb98@gmail.com</p>
+</footer>
+
+
+<script>
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
+</script>
+
+</body>
+</html>
+

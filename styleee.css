@@ -1,0 +1,115 @@
+:root {
+  --bg-color: white;
+  --text-color: black;
+  --header-bg: #1abc9c;
+  --nav-bg: #333;
+  --nav-text: white;
+  --footer-bg: #ddd;
+  --aside-bg: #f1f1f1;
+}
+
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #f0f0f0;
+  --header-bg: #0e7c6b;
+  --nav-bg: #222;
+  --nav-text: #eee;
+  --footer-bg: #1e1e1e;
+  --aside-bg: #1a1a1a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+header {
+  padding: 60px;
+  text-align: center;
+  background-color: var(--header-bg);
+  color: white;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--nav-bg);
+  padding: 0 10px;
+}
+
+nav .links {
+  display: flex;
+}
+
+nav a {
+  color: var(--nav-text);
+  padding: 14px 20px;
+  text-decoration: none;
+  text-align: center;
+}
+
+nav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.toggle-dark {
+  background: none;
+  border: none;
+  color: var(--nav-text);
+  padding: 14px 20px;
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+aside {
+  flex: 30%;
+  background-color: var(--aside-bg);
+  padding: 20px;
+}
+
+main {
+  flex: 70%;
+  padding: 20px;
+}
+
+.fakeimg {
+  background-color: #aaa;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  color: white;
+}
+
+footer {
+  padding: 20px;
+  text-align: center;
+  background: var(--footer-bg);
+    color: black;
+    align-items: center;
+}
+
+@media screen and (max-width: 700px) {
+  .row, nav .links {
+    flex-direction: column;
+  }
+
+  nav {
+    align-items: flex-start;
+  }
+}
