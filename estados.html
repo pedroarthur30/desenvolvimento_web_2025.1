@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dados COVID-19 por Estado</title>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse; 
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd; 
+            text-align: left;
+        }
+
+        thead {
+            background-color: #333;
+            color: #fff;
+        }
+
+        tfoot {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background-color: #fff3cd; 
+            font-weight: bold;
+        }
+
+        .info-card {
+            background: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Relatório de Casos de COVID-19 nos Estados Brasileiros</h1>
+        </header>
+
+        <main>
+            <h2>Análise da Relação Casos/Falecimentos</h2>
+            <div id="max-ratio-info" class="info-card">
+                <strong>Maior Relação (mais casos por falecimento):</strong> <span>Carregando...</span>
+            </div>
+            <div id="min-ratio-info" class="info-card">
+                <strong>Menor Relação (menos casos por falecimento):</strong> <span>Carregando...</span>
+            </div>
+
+            <h2>Tabela de Dados</h2>
+            <table id="states-table">
+                <thead>
+                    <tr>
+                        <th>Nome do Estado</th>
+                        <th>UF</th>
+                        <th>Nº de Casos</th>
+                        <th>Nº de Suspeitos</th>
+                        <th>Nº de Falecimentos</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+
+                    <tr>
+                        <td colspan="5" style="text-align: center;">Buscando dados da API...</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">MÉDIAS TOTAIS</td>
+                        <td id="avg-cases">-</td>
+                        <td id="avg-suspects">-</td>
+                        <td id="avg-deaths">-</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </main>
+    </div>
+
+    <script>
+        window.onload = function() {
+            fetchData();
+        };
+
+        async function fetchData() {
+            const tableBody = document.getElementById('table-body');
+            const url = 'https://covid19-brazil-api.now.sh/api/report/v1';
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                const data = result.data;
+
+                processData(data);
+
+            } catch (error) {
+                console.error("Erro ao buscar dados: ", error);
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Falha ao carregar dados da API.</td></tr>';
+            }
+        }
+
+        // Função para processar os dados e atualizar a página
+        function processData(data) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = ''; 
+
+            //  Calcular as médias
+            let totalCases = 0;
+            let totalSuspects = 0;
+            let totalDeaths = 0;
+
+            for (let i = 0; i < data.length; i++) {
+                totalCases += data[i].cases;
+                totalSuspects += data[i].suspects;
+                totalDeaths += data[i].deaths;
+            }
+
+            const avgCases = totalCases / data.length;
+            const avgSuspects = totalSuspects / data.length;
+            const avgDeaths = totalDeaths / data.length;
+
+            // Calcular maior e menor relação Casos/Falecimentos
+            let maxRatio = { state: '', ratio: -1 };
+            let minRatio = { state: '', ratio: Infinity };
+
+            data.forEach(state => {
+                // Evita divisão por zero se não houver falecimentos
+                const ratio = state.deaths > 0 ? state.cases / state.deaths : 0;
+                
+                if (ratio > maxRatio.ratio) {
+                    maxRatio = { state: state.state, ratio: ratio };
+                }
+                if (ratio < minRatio.ratio) {
+                    minRatio = { state: state.state, ratio: ratio };
+                }
+            });
+
+            // Preencher a tabela 
+            data.forEach(state => {
+                const row = document.createElement('tr');
+
+                //  Destacar linha se as mortes estiverem acima da média 
+                if (state.deaths > avgDeaths) {
+                    row.className = 'highlight';
+                }
+
+                // Formata os números para o padrão brasileiro
+                const casesFormatted = state.cases.toLocaleString('pt-BR');
+                const suspectsFormatted = state.suspects.toLocaleString('pt-BR');
+                const deathsFormatted = state.deaths.toLocaleString('pt-BR');
+
+                row.innerHTML = `
+                    <td>${state.state}</td>
+                    <td>${state.uf}</td>
+                    <td>${casesFormatted}</td>
+                    <td>${suspectsFormatted}</td>
+                    <td>${deathsFormatted}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById('avg-cases').textContent = Math.round(avgCases).toLocaleString('pt-BR');
+            document.getElementById('avg-suspects').textContent = Math.round(avgSuspects).toLocaleString('pt-BR');
+            document.getElementById('avg-deaths').textContent = Math.round(avgDeaths).toLocaleString('pt-BR');
+
+            document.querySelector('#max-ratio-info span').textContent = `${maxRatio.state} (${maxRatio.ratio.toFixed(2)} casos por morte)`;
+            document.querySelector('#min-ratio-info span').textContent = `${minRatio.state} (${minRatio.ratio.toFixed(2)} casos por morte)`;
+        }
+    </script>
+
+</body>
+</html>
