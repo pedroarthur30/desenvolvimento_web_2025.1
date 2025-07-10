@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Memória</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f8ff;
+            margin: 0;
+            color: #333;
+        }
+
+        h1 {
+            color: #005a9c;
+            text-align: center;
+        }
+
+        .status-jogo {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .tabuleiro-jogo {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+            perspective: 1000px;
+        }
+
+        .carta {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .carta.virada {
+            transform: rotateY(180deg);
+        }
+
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .face.face-verso {
+            background-color: #0077cc;
+            color: white;
+            font-size: 48px;
+        }
+
+        .face.face-frente {
+            background-color: #ffffff;
+            transform: rotateY(180deg);
+        }
+
+        .face.face-frente img {
+            width: 70px;
+            height: 70px;
+        }
+
+        .carta.par-encontrado {
+            cursor: default;
+            opacity: 0.6;
+        }
+    </style>
+    </head>
+<body>
+
+    <h1>Jogo da Memória</h1>
+    <p class="status-jogo">Encontre todos os 8 pares!</p>
+    
+    <main class="tabuleiro-jogo">
+        </main>
+
+    <script>
+        const tabuleiro = document.querySelector('.tabuleiro-jogo');
+        const statusJogo = document.querySelector('.status-jogo');
+
+        const imagensIcones = [
+            'angularjs', 'aurelia', 'backbonejs', 'bootstrap',
+            'c', 'cplusplus', 'css3', 'html5'
+        ];
+
+        const caminhosImagens = imagensIcones.map(nome => `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${nome}/${nome}-plain.svg`);
+
+        const baralho = [...caminhosImagens, ...caminhosImagens];
+
+        let primeiraCarta = null;
+        let segundaCarta = null;
+        let travarTabuleiro = false; 
+        let paresEncontrados = 0;
+
+        function embaralhar(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; 
+            }
+        }
+
+        function criarTabuleiro() {
+            embaralhar(baralho); 
+            
+            baralho.forEach(caminhoImagem => {
+                const carta = document.createElement('div');
+                carta.classList.add('carta');
+                carta.dataset.identificador = caminhoImagem;
+
+                const faceFrente = document.createElement('div');
+                faceFrente.classList.add('face', 'face-frente');
+                const img = document.createElement('img');
+                img.src = caminhoImagem;
+                faceFrente.appendChild(img);
+
+                const faceVerso = document.createElement('div');
+                faceVerso.classList.add('face', 'face-verso');
+                faceVerso.textContent = '?';
+
+                carta.appendChild(faceFrente);
+                carta.appendChild(faceVerso);
+                tabuleiro.appendChild(carta);
+
+                carta.addEventListener('click', virarCarta);
+            });
+        }
+
+        function virarCarta() {
+            if (travarTabuleiro || this === primeiraCarta || this.classList.contains('par-encontrado')) return;
+            
+            this.classList.add('virada');
+
+            if (!primeiraCarta) {
+                primeiraCarta = this;
+                return;
+            }
+
+            segundaCarta = this;
+            travarTabuleiro = true; 
+
+            checarPar();
+        }
+
+        function checarPar() {
+            const ehPar = primeiraCarta.dataset.identificador === segundaCarta.dataset.identificador;
+            
+            if (ehPar) {
+                desativarCartasComoPar();
+            } else {
+                desvirarCartas();
+            }
+        }
+
+        function desativarCartasComoPar() {
+            primeiraCarta.removeEventListener('click', virarCarta);
+            segundaCarta.removeEventListener('click', virarCarta);
+
+            primeiraCarta.classList.add('par-encontrado');
+            segundaCarta.classList.add('par-encontrado');
+
+            paresEncontrados++;
+            resetarJogada();
+            
+            if(paresEncontrados === imagensIcones.length){
+                setTimeout(() => {
+                   statusJogo.textContent = "Parabéns, você venceu!";
+                }, 500);
+            }
+        }
+
+        function desvirarCartas() {
+            setTimeout(() => {
+                primeiraCarta.classList.remove('virada');
+                segundaCarta.classList.remove('virada');
+                resetarJogada();
+            }, 1500);
+        }
+
+        function resetarJogada() {
+            primeiraCarta = null;
+            segundaCarta = null;
+            travarTabuleiro = false;
+        }
+        
+        criarTabuleiro();
+    </script>
+    </body>
+</html>
